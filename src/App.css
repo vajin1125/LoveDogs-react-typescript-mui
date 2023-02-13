@@ -1,0 +1,12 @@
+/* .MuiOutlinedInput-notchedOutline {
+  border-radius: 50px !important;
+} */
+.dogCardImg {
+  cursor: pointer;
+  opacity: 0.85;
+  transition: 0.3s ease;
+}
+.dogCardImg:hover {
+  opacity: 1;
+  transition: 0.3s ease;  
+}
