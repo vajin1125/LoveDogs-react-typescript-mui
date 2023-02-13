@@ -1,43 +1,26 @@
 import React, { useState, useEffect, useCallback, ChangeEvent } from 'react';
-// import { debounce } from 'lodash';
-// import { useDebounce } from 'usehooks-ts'
 import { trackPromise } from 'react-promise-tracker';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
-import Autocomplete from '@mui/material/Autocomplete';
-// import CameraIcon from '@mui/icons-material/PhotoCamera';
 import PetsIcon from '@mui/icons-material/Pets';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
-import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import ListSubheader from '@mui/material/ListSubheader';
 import IconButton from '@mui/material/IconButton';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { Masonry } from '@mui/lab';
-import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import TitleIcon from '@mui/icons-material/Title';
 import HeightIcon from '@mui/icons-material/Height';
 import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
 import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
-import Skeleton from '@mui/material/Skeleton';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
@@ -47,10 +30,11 @@ import { pink } from '@mui/material/colors';
 // components
 // import { BackToTop } from '../components/BackToTop';
 import DogModal from '../components/DogModal';
+import ImageCard from '../components/ImageCard';
 import ApiKey from '../components/ApiKey';
 import { LoadingIndicator } from "../components/Spinner";
-import CircularProgress from '@mui/material/CircularProgress';
-import { accordionDetailsClasses } from '@mui/material';
+
+const errorImage:string = 'https://i3.cpcache.com/merchandise/110_750x750_Front_Color-White.jpg?Size=L&AttributeValue=NA&c=False&region={"name":"FrontCenter","width":8,"height":8,"alignment":"MiddleCenter","orientation":0,"dpi":100,"crop_x":0,"crop_y":0,"crop_h":800,"crop_w":800,"scale":0,"template":{"id":83534939,"params":{}}}&cid=PUartJBjiF%2fyg4FdKqiggQ%3d%3d+%7c%7c+X5nqL0YJgh%2fomegMbGBl%2bg%3d%3d&ProductNo=699196288'
 
 function Copyright() {
   return (
@@ -77,25 +61,16 @@ export default function Home() {
   const [dogs, setDogs] = useState([])
   const [searchText, setSearchText] = useState("")
   const [isSearch, setIsSearch] = useState(false)
-
   const [openModal, setOpenModal] = useState(false)
   const [breedId, setBreedId] = useState()
-
   const [alignment, setAlignment] = React.useState<string | null>('name');
   const [asc, setAsc] = React.useState<boolean | null>(true);
-
-  const errorImage:string = 'https://i3.cpcache.com/merchandise/110_750x750_Front_Color-White.jpg?Size=L&AttributeValue=NA&c=False&region={"name":"FrontCenter","width":8,"height":8,"alignment":"MiddleCenter","orientation":0,"dpi":100,"crop_x":0,"crop_y":0,"crop_h":800,"crop_w":800,"scale":0,"template":{"id":83534939,"params":{}}}&cid=PUartJBjiF%2fyg4FdKqiggQ%3d%3d+%7c%7c+X5nqL0YJgh%2fomegMbGBl%2bg%3d%3d&ProductNo=699196288'
 
   const handleInputSearch = (e: ChangeEvent<HTMLInputElement>) => {
     let keyword = e.target.value.toLocaleLowerCase();
     setSearchText(keyword)
     console.log(keyword)
     keyword.length !== 0 ? setIsSearch(true) : setIsSearch(false) 
-  }
-
-  const handleClearSearch = () => {
-    setSearchText("")
-    setIsSearch(false)
   }
 
   const handleAlignment = (
@@ -195,10 +170,6 @@ export default function Home() {
   };
 
   const searchBreed = async (searchText:any) => {
-    // const searchResult = await dogs.filter((dog: any) => 
-    //   dog.name.toLowerCase().includes(searchText.toLowerCase()) === true)
-    // console.log(searchResult)
-    // setDogs(searchResult)
     try {
       const res = await fetch(`${ApiKey.endpoint}v1/breeds/search?q=${searchText}`, {
         headers: ApiKey.headers
@@ -211,14 +182,9 @@ export default function Home() {
       console.error(error);
     }
   }
-
-  useEffect(() => {
-    fetchDogData();
-  }, [])
   
   useEffect(() => {
     if (isSearch) {
-      // setIsSearch(true)
       const debounceRun = setTimeout(() => {
         trackPromise(searchBreed(searchText))
       }, 1000)
@@ -226,7 +192,6 @@ export default function Home() {
     } else {
       trackPromise(fetchDogData())
     }
-    // setIsSearch(false)
   }, [searchText])
 
   useEffect(() => {
@@ -243,10 +208,6 @@ export default function Home() {
   const handleModalClose = () => {
     setOpenModal(false)
   }
-
-  const onImageError = (e:any) => [
-    e.target.src = errorImage
-  ]
 
   return (
     <ThemeProvider theme={theme}>
@@ -275,6 +236,7 @@ export default function Home() {
               align="center"
               color="text.primary"
               gutterBottom
+              data-testid="home-title"
             >
               Find out your faviorate dogs 
             </Typography>
@@ -287,32 +249,13 @@ export default function Home() {
               spacing={2}
               justifyContent="center"
             >
-              {/* Autocomplete searchbox */}
               <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                 <SearchIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-                {/* <Autocomplete
-                  freeSolo
-                  id="free-solo-2-demo"
-                  options={dogs.map((option: any) => option.name)}
-                  sx={{ width: 300, borderRadius: '50%' }}
-                  renderInput={(params) => 
-                    <TextField 
-                      {...params}  
-                      variant="standard"
-                      label="Search"
-                      value={searchText}
-                      onChange={handleInputSearch}
-                      />
-                    }
-                  onClose={handleClearSearch}
-                  onInputChange={handleInputSearch}
-                /> */}
                 <TextField
                   id="standard-basic" 
                   label="Type Search Keyword..." 
                   variant="standard" 
                   sx={{ width: 300 }}
-                  // value={searchText}
                   onChange={handleInputSearch}
                 />
               </Box>
@@ -368,61 +311,21 @@ export default function Home() {
               dogs.map((dog: any) => (
                 !isSearch ? (
                   typeof dog.image !== 'undefined' ? (
-                    <ImageListItem key={dog.id}> 
-                      <img
-                        className='dogCardImg'
-                        src={`${dog.image.url}`}
-                        alt={dog.name}
-                        loading="lazy"
-                        onClick={() => handleOpenModal(dog.id)}
-                        onError={onImageError}
-                      />
-                      <ImageListItemBar
-                        title={dog.name}
-                        subtitle={dog.bred_for ?? dog.breed_group}
-                        actionIcon={
-                          <IconButton
-                            sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                            aria-label={`info about ${dog.name}`}
-                          >
-                            <StarBorderIcon
-                              // onClick={() => {
-                              //   alert(`I like the ${dog.name}`)
-                              // }}
-                            />
-                          </IconButton>
-                        }
-                      />
-                    </ImageListItem>
+                    <ImageCard 
+                      key={dog.id}
+                      dog = {dog}
+                      isSearch={isSearch}
+                      handleOpenModal={handleOpenModal}
+                    />
                   ) : null
                 ) : (
-                    <ImageListItem key={dog.id}> 
-                      <img
-                        className='dogCardImg'
-                        src={`https://cdn2.thedogapi.com/images/${dog.reference_image_id}.jpg`}
-                        alt={dog.name}
-                        loading="lazy"
-                        onClick={() => handleOpenModal(dog.id)}
-                        onError={onImageError}
-                      />
-                      <ImageListItemBar
-                        title={dog.name}
-                        subtitle={dog.bred_for ?? dog.breed_group}
-                        actionIcon={
-                          <IconButton
-                            sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
-                            aria-label={`info about ${dog.name}`}
-                          >
-                            <StarBorderIcon
-                              // onClick={() => {
-                              //   alert(`I like the ${dog.name}`)
-                              // }}
-                            />
-                          </IconButton>
-                        }
-                      />
-                    </ImageListItem>
-                  )
+                  <ImageCard 
+                    key={dog.id}
+                    dog = {dog}
+                    handleOpenModal={handleOpenModal}
+                    isSearch={isSearch}
+                  />
+                )
               ))
             ) : (
               // No Search result

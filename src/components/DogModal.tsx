@@ -5,15 +5,6 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Stack from '@mui/material/Stack';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import { Paper, Button } from '@mui/material'
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
 import Carousel from 'react-material-ui-carousel';
 import Typography from '@mui/material/Typography';
 import ApiKey from './ApiKey';
@@ -27,10 +18,6 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: '60%',
   height: '80%',
-  // bgcolor: 'background.paper',
-  // border: '2px solid #000',
-  // boxShadow: 24,
-  // p: 4,
   backgroundColor: 'transparent' ,
   outline: 'none'
 };
