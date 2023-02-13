@@ -10,11 +10,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
-import ImageListItem from '@mui/material/ImageListItem';
-import ImageListItemBar from '@mui/material/ImageListItemBar';
-import IconButton from '@mui/material/IconButton';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import { Masonry } from '@mui/lab';
+// import { Masonry } from '@mui/lab';
+import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import TitleIcon from '@mui/icons-material/Title';
@@ -121,7 +118,7 @@ export default function Home() {
       await dogs.sort((c:any, d:any) => {
         const comA = c.name.toUpperCase(); // ignore upper and lowercase
         const comB = d.name.toUpperCase(); // ignore upper and lowercase
-        if(asc) {
+        if(b) {
           return comA > comB ? 1 : -1
         } else {
           return comA > comB ? -1 : 1
@@ -133,7 +130,7 @@ export default function Home() {
       await dogs.sort((c:any, d:any) => {
         const comA = calcAvgHeight(c.height.metric); // calculate the avg height
         const comB = calcAvgHeight(d.height.metric); // calculate the avg height
-        if(asc) {
+        if(b) {
           return comA > comB ? 1 : -1
         } else {
           return comA > comB ? -1 : 1
@@ -145,7 +142,7 @@ export default function Home() {
       await dogs.sort((c:any, d:any) => {
         const comA = calcAvgLifespan(c.life_span); // calculate the avg height
         const comB = calcAvgLifespan(d.life_span); // calculate the avg height
-        if(asc) {
+        if(b) {
           return comA > comB ? 1 : -1
         } else {
           return comA > comB ? -1 : 1
@@ -306,29 +303,17 @@ export default function Home() {
         <LoadingIndicator />
         <Container sx={{ py: 4 }} maxWidth="lg">
           
-          <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
-            {dogs.length > 0 ? (
+          {/* <Masonry defaultColumns={3} columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
+          { dogs.length > 0 ? (
               dogs.map((dog: any) => (
-                !isSearch ? (
-                  typeof dog.image !== 'undefined' ? (
-                    <ImageCard 
-                      key={dog.id}
-                      dog = {dog}
-                      isSearch={isSearch}
-                      handleOpenModal={handleOpenModal}
-                    />
-                  ) : null
-                ) : (
-                  <ImageCard 
-                    key={dog.id}
-                    dog = {dog}
-                    handleOpenModal={handleOpenModal}
-                    isSearch={isSearch}
-                  />
-                )
+                <ImageCard 
+                  key={dog.id}
+                  dog = {dog}
+                  isSearch={isSearch}
+                  handleOpenModal={handleOpenModal}
+                />
               ))
             ) : (
-              // No Search result
               <div className='errordiv' style={{width: '80%', textAlign: 'center'}}>
                 <img
                   src={errorImage}
@@ -336,8 +321,34 @@ export default function Home() {
                   style={{ height: 400 }}
                 />
               </div>
-            )}
-          </Masonry>
+            )
+          }
+          </Masonry> */}
+          <ResponsiveMasonry
+            columnsCountBreakPoints={{350: 1, 750: 2, 900: 3}}
+          >
+            <Masonry gutter="10px">
+            { dogs.length > 0 ? (
+                dogs.map((dog: any) => (
+                  <ImageCard 
+                    key={dog.id}
+                    dog = {dog}
+                    isSearch={isSearch}
+                    handleOpenModal={handleOpenModal}
+                  />
+                ))
+              ) : (
+                <div className='errordiv' style={{width: '80%', textAlign: 'center'}}>
+                  <img
+                    src={errorImage}
+                    alt="Error"
+                    style={{ height: 400 }}
+                  />
+                </div>
+              )
+            }
+            </Masonry>
+          </ResponsiveMasonry>
         </Container>
         <DogModal isOpen={openModal} breed_id={breedId} handleClose={handleModalClose}/>
       </main>
