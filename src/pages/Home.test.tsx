@@ -1,6 +1,6 @@
 import React from "react"
 import Home from "./Home"
-import {render, screen} from "@testing-library/react"
+import {act, fireEvent, render, screen} from "@testing-library/react"
 import {mockResult} from "../test/mockData"
 
 // global.fetch = jest.fn(() => Promise.resolve(mockResult))

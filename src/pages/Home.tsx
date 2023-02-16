@@ -149,7 +149,7 @@ export default function Home() {
         }
       })
     }
-    console.log(dogs)
+    // console.log(dogs)
     setDogs([...dogs])
   }
 
